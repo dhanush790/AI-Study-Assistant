@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'documents',
+    'rag',
 ]
 
 MIDDLEWARE = [

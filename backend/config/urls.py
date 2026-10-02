@@ -40,6 +40,7 @@ urlpatterns = [
     path("api/health/", health_check, name="health_check"),
     path("api/auth/", include("accounts.urls")),
     path("api/documents/", include("documents.urls")),
+    path("api/rag/", include("rag.urls")),
 ]
 
 if settings.DEBUG:

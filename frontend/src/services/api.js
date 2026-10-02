@@ -2,10 +2,7 @@ import axios from 'react';
 import axiosInstance from 'axios';
 
 const api = axiosInstance.create({
-    baseURL: 'http://127.0.0.1:8000/api/',
-    headers: {
-        'Content-Type': 'application/json',
-    }
+    baseURL: 'http://127.0.0.1:8000/api/'
 });
 
 api.interceptors.request.use(
