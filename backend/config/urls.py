@@ -41,6 +41,7 @@ urlpatterns = [
     path("api/auth/", include("accounts.urls")),
     path("api/documents/", include("documents.urls")),
     path("api/rag/", include("rag.urls")),
+    path("api/chat/", include("chat.urls")),
 ]
 
 if settings.DEBUG:

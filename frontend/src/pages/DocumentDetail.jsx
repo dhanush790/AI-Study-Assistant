@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, Download, Trash2 } from 'lucide-react';
 import api from '../services/api';
+import Chat from '../components/Chat';
 
 const DocumentDetail = () => {
     const { id } = useParams();
@@ -52,8 +53,8 @@ const DocumentDetail = () => {
                 </div>
             </nav>
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
                     <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
                         <div className="flex items-center">
                             <FileText className="h-8 w-8 text-blue-500 mr-3" />
@@ -79,7 +80,7 @@ const DocumentDetail = () => {
                         </div>
                     </div>
                     <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                        <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                        <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-4">
                             <div className="sm:col-span-1">
                                 <dt className="text-sm font-medium text-gray-500">File Type</dt>
                                 <dd className="mt-1 text-sm text-gray-900 uppercase">{document.file_type}</dd>
@@ -89,21 +90,18 @@ const DocumentDetail = () => {
                                 <dd className="mt-1 text-sm text-gray-900">{(document.file_size / (1024 * 1024)).toFixed(2)} MB</dd>
                             </div>
                             <div className="sm:col-span-1">
-                                <dt className="text-sm font-medium text-gray-500">Processing Status</dt>
+                                <dt className="text-sm font-medium text-gray-500">Status</dt>
                                 <dd className="mt-1 text-sm text-gray-900 capitalize">{document.processing_status}</dd>
-                            </div>
-                            <div className="sm:col-span-1">
-                                <dt className="text-sm font-medium text-gray-500">Upload Date</dt>
-                                <dd className="mt-1 text-sm text-gray-900">{new Date(document.uploaded_at).toLocaleString()}</dd>
-                            </div>
-                            <div className="sm:col-span-2 mt-6">
-                                <dt className="text-sm font-medium text-gray-500 mb-2">AI Features</dt>
-                                <dd className="text-sm text-gray-900 bg-gray-50 border border-dashed border-gray-300 p-6 rounded-md text-center">
-                                    <p className="text-gray-500">RAG processing, Chat, Summarization, and MCQ generation will appear here in upcoming phases!</p>
-                                </dd>
                             </div>
                         </dl>
                     </div>
+                </div>
+
+                {/* AI Chat Interface */}
+                <div>
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">Chat with this Document</h2>
+                    <p className="text-sm text-gray-500">Ask questions, request summaries, or clarify concepts from {document.title}.</p>
+                    <Chat documentId={document.id} />
                 </div>
             </main>
         </div>
