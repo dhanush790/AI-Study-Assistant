@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: ai_study_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_media:/app/media
+      - backend_chroma:/app/chroma_db
+      - backend_sqlite:/app/db.sqlite3
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - MAX_FILE_SIZE_MB=20
+      - DJANGO_DEBUG=False
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: ai_study_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_media:
+  backend_chroma:
+  backend_sqlite:

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, Download, Trash2 } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Trash2, MessageSquare, List, HelpCircle } from 'lucide-react';
 import api from '../services/api';
 import Chat from '../components/Chat';
+import SummaryView from '../components/SummaryView';
+import MCQView from '../components/MCQView';
 
 const DocumentDetail = () => {
     const { id } = useParams();
@@ -10,6 +12,7 @@ const DocumentDetail = () => {
     const [document, setDocument] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [activeTab, setActiveTab] = useState('chat'); // 'chat', 'summary', 'mcq'
 
     useEffect(() => {
         const fetchDocument = async () => {
@@ -97,11 +100,38 @@ const DocumentDetail = () => {
                     </div>
                 </div>
 
-                {/* AI Chat Interface */}
+                {/* AI Features Tabs */}
+                <div className="mb-4 border-b border-gray-200">
+                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                        <button
+                            onClick={() => setActiveTab('chat')}
+                            className={`${activeTab === 'chat' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
+                        >
+                            <MessageSquare className="h-5 w-5 mr-2" />
+                            Chat Interface
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('summary')}
+                            className={`${activeTab === 'summary' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
+                        >
+                            <List className="h-5 w-5 mr-2" />
+                            Study Guide
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('mcq')}
+                            className={`${activeTab === 'mcq' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
+                        >
+                            <HelpCircle className="h-5 w-5 mr-2" />
+                            Practice Quiz
+                        </button>
+                    </nav>
+                </div>
+
+                {/* Tab Content */}
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Chat with this Document</h2>
-                    <p className="text-sm text-gray-500">Ask questions, request summaries, or clarify concepts from {document.title}.</p>
-                    <Chat documentId={document.id} />
+                    {activeTab === 'chat' && <Chat documentId={document.id} />}
+                    {activeTab === 'summary' && <SummaryView documentId={document.id} />}
+                    {activeTab === 'mcq' && <MCQView documentId={document.id} />}
                 </div>
             </main>
         </div>

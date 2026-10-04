@@ -1,7 +1,13 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from documents.models import Document
 from .engine import answer_question, generate_summary, generate_mcq
+
+def _verify_doc_ownership(user, document_id):
+    if document_id and not Document.objects.filter(id=document_id, uploaded_by=user).exists():
+        return False
+    return True
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -11,6 +17,9 @@ def chat_view(request):
     
     if not query:
         return Response({"error": "Message is required"}, status=400)
+    
+    if not _verify_doc_ownership(request.user, document_id):
+        return Response({"error": "You do not have permission to access this document."}, status=403)
         
     try:
         result = answer_question(request.user.id, document_id, query)
@@ -24,6 +33,9 @@ def summary_view(request):
     document_id = request.data.get('document_id')
     if not document_id:
         return Response({"error": "Document ID is required"}, status=400)
+    
+    if not _verify_doc_ownership(request.user, document_id):
+        return Response({"error": "You do not have permission to access this document."}, status=403)
         
     try:
         summary = generate_summary(request.user.id, document_id)
@@ -39,6 +51,9 @@ def mcq_view(request):
     
     if not document_id:
         return Response({"error": "Document ID is required"}, status=400)
+        
+    if not _verify_doc_ownership(request.user, document_id):
+        return Response({"error": "You do not have permission to access this document."}, status=403)
         
     try:
         mcqs = generate_mcq(request.user.id, document_id, int(count))

@@ -11,17 +11,25 @@ from documents.models import Document
 embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 def get_llm():
-    api_key = os.environ.get("GROQ_API_KEY", "")
-    return ChatGroq(temperature=0, groq_api_key=api_key, model_name="llama3-8b-8192")
+    api_key = os.environ.get("LLM_API_KEY") or os.environ.get("GROQ_API_KEY", "")
+    # Use the specific user-requested OpenAI open source model that Groq now hosts
+    model_name = "openai/gpt-oss-20b"
+    return ChatGroq(temperature=0, groq_api_key=api_key, model_name=model_name)
 
 def get_retriever(user_id, document_id=None, k=4):
     chroma_dir = os.path.join(settings.BASE_DIR, 'chroma_db')
     vectorstore = Chroma(persist_directory=chroma_dir, embedding_function=embeddings_model)
     
     # Create filter based on user and optionally specific document
-    search_filter = {"user_id": user_id}
     if document_id:
-        search_filter["document_id"] = document_id
+        search_filter = {
+            "$and": [
+                {"user_id": user_id},
+                {"document_id": document_id}
+            ]
+        }
+    else:
+        search_filter = {"user_id": user_id}
         
     return vectorstore.as_retriever(search_kwargs={"k": k, "filter": search_filter})
 

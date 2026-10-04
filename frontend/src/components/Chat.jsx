@@ -71,7 +71,8 @@ const Chat = ({ documentId }) => {
             setMessages([...messages, userMessage, response.data]);
         } catch (error) {
             console.error('Error sending message:', error);
-            setMessages([...messages, userMessage, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+            const errorMsg = error.response?.data?.error || 'Sorry, I encountered an error. Please try again.';
+            setMessages([...messages, userMessage, { role: 'assistant', content: `Error: ${errorMsg}` }]);
         } finally {
             setLoading(false);
         }
