@@ -24,5 +24,8 @@ COPY . /app/
 # Expose port so Render knows where to route
 EXPOSE 10000
 
-# Run gunicorn
-CMD python manage.py migrate && gunicorn --bind 0.0.0.0:10000 config.wsgi:application --workers 1 --threads 1
+# Make entrypoint executable
+RUN chmod +x entrypoint.sh
+
+# Run entrypoint
+CMD ["./entrypoint.sh"]
