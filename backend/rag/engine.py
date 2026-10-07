@@ -2,7 +2,7 @@ import os
 import json
 from django.conf import settings
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from documents.models import Document
@@ -13,7 +13,16 @@ _embeddings_model = None
 def get_embeddings():
     global _embeddings_model
     if _embeddings_model is None:
-        _embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        hf_token = os.environ.get("HF_API_KEY", "")
+        if hf_token:
+            _embeddings_model = HuggingFaceInferenceAPIEmbeddings(
+                api_key=hf_token, 
+                model_name="sentence-transformers/all-MiniLM-L6-v2"
+            )
+        else:
+            # Fallback for local development if they have RAM
+            from langchain_huggingface import HuggingFaceEmbeddings
+            _embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     return _embeddings_model
 
 def get_llm():
