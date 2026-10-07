@@ -7,8 +7,14 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from documents.models import Document
 
-# Use the same embeddings model
-embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+# Lazy load embeddings model to prevent OOM during migrations
+_embeddings_model = None
+
+def get_embeddings():
+    global _embeddings_model
+    if _embeddings_model is None:
+        _embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    return _embeddings_model
 
 def get_llm():
     api_key = os.environ.get("LLM_API_KEY") or os.environ.get("GROQ_API_KEY", "")
@@ -18,7 +24,7 @@ def get_llm():
 
 def get_retriever(user_id, document_id=None, k=4):
     chroma_dir = os.path.join(settings.BASE_DIR, 'chroma_db')
-    vectorstore = Chroma(persist_directory=chroma_dir, embedding_function=embeddings_model)
+    vectorstore = Chroma(persist_directory=chroma_dir, embedding_function=get_embeddings())
     
     # Create filter based on user and optionally specific document
     if document_id:

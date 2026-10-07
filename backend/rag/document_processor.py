@@ -8,10 +8,7 @@ from langchain_chroma import Chroma
 from documents.models import Document
 import threading
 
-# Initialize embeddings model globally so it's only loaded once per process.
-# HuggingFaceEmbeddings will automatically download the model from Hugging Face 
-# and cache it in ~/.cache/huggingface/hub/ the first time it's initialized.
-embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+from .engine import get_embeddings
 
 def process_document(document_id):
     try:
@@ -57,7 +54,7 @@ def process_document(document_id):
         # We use from_documents which will automatically generate embeddings and insert
         vectorstore = Chroma.from_documents(
             documents=chunks,
-            embedding=embeddings_model,
+            embedding=get_embeddings(),
             persist_directory=chroma_dir
         )
 
