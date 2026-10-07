@@ -1,8 +1,10 @@
 import axios from 'react';
 import axiosInstance from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/';
+
 const api = axiosInstance.create({
-    baseURL: 'http://127.0.0.1:8000/api/'
+    baseURL: API_BASE_URL
 });
 
 api.interceptors.request.use(
@@ -29,7 +31,7 @@ api.interceptors.response.use(
             const refreshToken = localStorage.getItem('refresh_token');
             if (refreshToken) {
                 try {
-                    const response = await axiosInstance.post('http://127.0.0.1:8000/api/auth/refresh/', {
+                    const response = await axiosInstance.post(`${API_BASE_URL}auth/refresh/`, {
                         refresh: refreshToken
                     });
                     localStorage.setItem('access_token', response.data.access);
