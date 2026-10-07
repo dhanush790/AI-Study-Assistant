@@ -25,4 +25,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application --workers 1 --threads 1
