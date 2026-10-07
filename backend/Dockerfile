@@ -21,5 +21,8 @@ RUN pip install gunicorn
 # Copy project files
 COPY . /app/
 
+# Expose port so Render knows where to route
+EXPOSE 10000
+
 # Run gunicorn
-CMD python manage.py migrate && gunicorn --bind 0.0.0.0:${PORT:-10000} config.wsgi:application --workers 1 --threads 1
+CMD python manage.py migrate && gunicorn --bind 0.0.0.0:10000 config.wsgi:application --workers 1 --threads 1
